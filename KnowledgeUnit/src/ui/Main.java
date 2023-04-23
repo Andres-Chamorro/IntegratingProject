@@ -8,16 +8,27 @@ import model.Budge;
 import model.Collaborator;
 import java.util.Calendar;
 import model.Administrator;
-
+/**
+ * The Main class represents the main entry point for the project management system.
+ * It handles the user interface and executes the requested options.
+ */
 public class Main{
 
     private Administrator controller;
     private Scanner reader;  
+    
+    /**
+     * Constructs a new instance of the Main class, initializing the scanner and the controller.
+     */
 
     public Main(){
         this.reader = new Scanner(System.in); 
         controller = new Administrator();
     }
+    /**
+     * The main method that initializes the Main class and executes the user interface loop.
+     * @param args An array of command-line arguments for the main method.
+     */
 
     public static void main(String[] args){
         Main view = new Main(); 
@@ -33,6 +44,10 @@ public class Main{
 
         view.reader.close();
     }
+
+    /**
+     * Prints the main menu options for the user to choose from.
+     */
 
     public void menu(){
         System.out.println("--------------------------------------------");
@@ -52,6 +67,10 @@ public class Main{
         System.out.println("Write the number of the option you want to perform:"); 
 
     }
+    /**
+     * Executes the selected option by the user.
+     * @param option The integer representing the selected option.
+     */
 
     public void executeOption(int option){
         switch (option) {
@@ -96,6 +115,11 @@ public class Main{
         }
     }
 
+    /**
+     * Validates the user input as an integer value.
+     * @return The integer value entered by the user, or -1 if the input is not valid.
+     */
+
     public int validateIntegerInput(){
         int option = 0; 
         if(reader.hasNextInt()){
@@ -109,7 +133,9 @@ public class Main{
         return option; 
     }
 
-    
+    /**
+     * Prompts the user to enter the details of a new project and adds it to the system.
+     */
 
     public void registerProject(){
         reader.nextLine();
@@ -145,7 +171,7 @@ public class Main{
         System.out.println("Name of client manager for this project:");
         String clientManagerName = reader.nextLine();
     
-        System.out.println("Mobile number of the client's manager for this project:");
+        System.out.println("Client manager cell number for this project:");
         String clientManagerPhone = reader.nextLine();
         System.out.println("--------------------------------------------");
         System.out.println("Enter the months of duration of each stage:");
@@ -184,6 +210,12 @@ public class Main{
         System.out.println("Project finish date: " + dateFinish.getTime());
     }
 
+    /**
+     * Method to culminate a project stage.
+     * It prompts the user to enter the project name,
+     * then passes it to the controller to culminate the stage.
+     */
+
     public void culminateStage() {
         reader.nextLine();
         System.out.println("--------------------------------------------");
@@ -192,6 +224,12 @@ public class Main{
 
         controller.culminateStage(nameProject);
     }
+
+    /**
+     * Method to register a new project budge.
+     * It prompts the user to enter information about the budge,
+     * validates user input, and then passes it to the controller to be added to the current project stage
+     */
 
     public void registerBudge() {
         Scanner reader = new Scanner(System.in);
@@ -247,6 +285,11 @@ public class Main{
         controller.addBudgeToCurrentEtapa(nameProject, idBudge, description, typeBudge, lessonLearned, nameCollaborator, jobCompany);
     }
 
+    /**
+     * This method prompts the user to enter a project name, and calls the 'approvedBudges' method of the controller,
+     * passing the project name as a parameter.
+     */
+
     public void approvedBudges() {
         reader.nextLine();
         System.out.print("Enter the project name: ");
@@ -255,6 +298,11 @@ public class Main{
         controller.approvedBudges(nameProject);
     }
 
+    /**
+     * This method prompts the user to enter a project name, and calls the 'publishedBudgesApproved' method of the controller,
+     * passing the project name as a parameter.
+     */
+
     public void publishedBudge() {
         reader.nextLine();
         System.out.print("Enter the project name: ");
@@ -262,6 +310,10 @@ public class Main{
 
         controller.publishedBudgesApproved(nameProject);
     }
+    /**
+     * This method prompts the user to enter a project name, and calls the 'createBudgeReport' method of the controller,
+     * passing the project name as a parameter.
+     */
 
     public void budgesByType() {
         reader.nextLine();
@@ -270,6 +322,10 @@ public class Main{
 
         controller.createBudgeReport(nameProject);
     }
+    /**
+     * This method prompts the user to enter a collaborator's name, and calls the 'searchCollaborator' method of the controller,
+     * passing the collaborator's name as a parameter.
+     */
 
     public void searchCollaboratorBudge() {
         reader.nextLine();
@@ -278,6 +334,11 @@ public class Main{
 
         controller.searchCollaborator(nameCollaborator);
     }
+
+    /**
+     * This method calls the 'projectWithMoreBudges' method of the controller to find the project with the most capsules.
+     * If a project with capsules is found, the method displays its name, otherwise it prints a message indicating that there are no projects with capsules.
+     */
 
     public void searchProjectMoreBudges(){
         String projectMoreBudges = controller.projectWithMoreBudges();
@@ -288,6 +349,10 @@ public class Main{
             System.out.println("There are no projects with capsules.");
         }
     }
+    /**
+     * This method prompts the user to enter a project name and stage name, and calls the 'informationLessonsLearning' method of the controller,
+     * passing the corresponding project and stage objects as parameters.
+     */
 
     public void informationLessonsLearning() {
         reader.nextLine();
@@ -308,11 +373,16 @@ public class Main{
         controller.informationLessonsLearning(project, stage);
     }
 
+    /**
+     * This method prompts the user to enter a project name and a keyword, and calls the 'searchBudges' method of the controller,
+     * passing the project name and keyword as parameters.
+     */
+
     public void searchCapsulesByKeyword() {
         reader.nextLine();
-        System.out.println("Ingrese el nombre del proyecto:");
+        System.out.println("Enter the project name:");
         String projectName = reader.nextLine();
-        System.out.println("Ingrese la palabra clave:");
+        System.out.println("enter keyword:");
         String keyword = reader.nextLine();
         controller.searchBudges(projectName, keyword);
     }

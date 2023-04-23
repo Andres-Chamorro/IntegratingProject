@@ -379,7 +379,7 @@ public class Administrator {
 				}
 			}
 		} else {
-			System.out.println("No se encontro ningun proyecto con el nombre '" + nameProject + "'.");
+			System.out.println("No project found with the name '" + nameProject + "'.");
 		}
 	}
 }
