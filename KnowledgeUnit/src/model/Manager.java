@@ -7,7 +7,7 @@ import java.util.Scanner;
  * about the manager's name, phone number, and the name and phone number of the manager's
  * client.
  */
-public class Gerente {
+public class Manager {
     private String nameGreen;
     private String phoneGreen;
     private String nameManagerClient;
@@ -23,7 +23,7 @@ public class Gerente {
      * @param nameManagerClient the name of the manager's client
      * @param phoneManagerClient the phone number of the manager's client
      */
-    public Gerente(String nameGreen, String phoneGreen, String nameManagerClient, String phoneManagerClient) {
+    public Manager(String nameGreen, String phoneGreen, String nameManagerClient, String phoneManagerClient) {
         this.nameGreen = nameGreen;
         this.phoneGreen = phoneGreen;
         this.nameManagerClient = nameManagerClient;

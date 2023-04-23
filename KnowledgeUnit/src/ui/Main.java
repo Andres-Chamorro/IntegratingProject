@@ -1,361 +1,319 @@
-package ui;
+package ui; 
 
 import java.util.Scanner;
 import java.text.SimpleDateFormat;
-import model.Proyecto;
-import model.Gerente;
-import model.Etapa;
+import model.Project;
+import model.Stage;
 import model.Budge;
-import model.Budge.TipoCapsula;
 import model.Collaborator;
 import java.util.Calendar;
+import model.Administrator;
 
-/**
- * The Main class represents the main class of the program that allows users to
- * create, manage and publish projects and their budgets.
- */
+public class Main{
 
-public class Main {
-    private Scanner reader;
-    static int numProyectos;
-    static int numBudges;
-    private Proyecto[] proyectos; 
-    private Budge[] budges;
-    private Proyecto proyectoActual; // Declaring proyectoActual as a class member
-
-    /**
-     * Constructs a new Main object, initializes its fields, and creates a new Administrator object.
-     */
+    private Administrator controller;
+    private Scanner reader;  
 
     public Main(){
-        this.reader = new Scanner(System.in);
-        proyectos = new Proyecto[10];       // inicializamos el arreglo de proyectos
-        budges = new Budge[50];
-        Proyecto proyectoActual = null;
-
+        this.reader = new Scanner(System.in); 
+        controller = new Administrator();
     }
 
-    /**
-     * The main method that runs the program and displays the menu options to the user.
-     * It repeatedly prompts the user to input an option number until they choose to exit.
-     * 
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        Main view = new Main();
-        numProyectos=0;
-        numBudges=0;
-        int option = 0;
-        int contadorProyectos = 0; // variable para contar los proyectos creados
-        
-        do {
-            view.menu();
+    public static void main(String[] args){
+        Main view = new Main(); 
+        int option = 0; 
+
+        do{
+            view.menu(); 
             option = view.validateIntegerInput(); 
             view.executeOption(option);
-        
-        } while (option != 6);
-    }
 
-    /**
-     * Displays the menu options to the user.
-     */
+        }while(option != 11);
+
+
+        view.reader.close();
+    }
 
     public void menu(){
         System.out.println("--------------------------------------------");
         System.out.println("Menu:");
-        System.out.println("1. Crear un proyecto");
-        System.out.println("2. Culminar etapa de un proyecto");
+        System.out.println("1. Create a project");
+        System.out.println("2. Complete stage of a project");
         System.out.println("3. Registrar capsula");
-        System.out.println("4. Aprobar capsula");
-        System.out.println("5. Publicar capsula");
-        System.out.println("6. Salir");
+        System.out.println("4. Approve capsule");
+        System.out.println("5. Published capsule");
+        System.out.println("6. Consult capsules by type");
+        System.out.println("7. Check list of lessons learned");
+        System.out.println("8. Consult project with more capsules");
+        System.out.println("9. Consult creation of capsules by collaborator");
+        System.out.println("10. Consult descriptions and lessons learned by text string");
+        System.out.println("11. Exit");
         System.out.println("--------------------------------------------");
-        System.out.println("Escriba el numero de la opcion que desea realizar:");
-        
+        System.out.println("Write the number of the option you want to perform:"); 
+
     }
-
-    /**
-     * Prompts the user to input an integer and validates that the input is indeed an integer.
-     * 
-     * @return the integer input by the user, or -1 if the input was not an integer
-     */
-
-    public int validateIntegerInput(){
-        int option = 0; 
-        if(reader.hasNextInt()){
-            option = reader.nextInt(); 
-            System.out.println("--------------------------------------------");
-        }
-        else{
-            reader.nextLine();// limpiar el scanner 
-            option = -1; 
-            System.out.println("Ingrese un valor entero."); 
-        }
-        return option; 
-    }
-
-    /**
-     * Executes the menu option chosen by the user based on the input integer.
-     * 
-     * @param option the integer input by the user representing the menu option
-     */
 
     public void executeOption(int option){
         switch (option) {
             case 1:
                 registerProject();
-                System.out.println("");
-                System.out.println("'Proyecto registrado correctamente'");
                 break;
+
             case 2:
-                if (proyectoActual != null){
-                    proyectos[numProyectos - 1].avanzarEtapa();
-                }else{
-                    System.out.println("No hay ningún proyecto seleccionado.");
-                } 
+                culminateStage();
                 break;
-            case 3:
-                if (proyectoActual!=null){
-                    createBudge(proyectoActual.getEtapaActual());
-                }else{
-                    System.out.println("No hay ningún proyecto seleccionado.");
-                }
+
+            case 3: 
+                registerBudge();
                 break;
-            case 4:   
-               if (proyectoActual != null){
-                   Etapa etapaActual = proyectoActual.getEtapaActual();
-                   aprobarBudge(etapaActual);
-                }else{
-                   System.out.println("No hay ningún proyecto seleccionado.");
-                } 
-                break; 
+            case 4:
+                approvedBudges();
+                break;
             case 5:
-                if (proyectoActual != null){
-                   Etapa etapaActual = proyectoActual.getEtapaActual();
-                   publicarBudge(etapaActual);
-                }else{
-                   System.out.println("No hay ningún proyecto seleccionado.");
-                } 
+                publishedBudge();
                 break;
             case 6:
-                System.out.println("Exit."); 
-                System.out.println("--------------------------------------------");
+                budgesByType();
                 break;
+            case 7:
+                informationLessonsLearning();
+                break;
+            case 8:
+                searchProjectMoreBudges();
+                break;
+            case 9:
+                searchCollaboratorBudge();
+                break;
+            case 10:
+                searchCapsulesByKeyword();
+                break;
+            case 11:
+                System.out.println("'Exit.'"); 
+                break; 
             default:
-                System.out.println("Invalit Option!!"); 
+                System.out.println("'Invalid Option!!'"); 
+                break; 
+        }
+    }
+
+    public int validateIntegerInput(){
+        int option = 0; 
+        if(reader.hasNextInt()){
+            option = reader.nextInt(); 
+        }
+        else{
+            reader.nextLine();// limpiar el scanner  
+            option=-1;
+            System.out.println("Enter an integer value"); 
+        }
+        return option; 
+    }
+
+    
+
+    public void registerProject(){
+        reader.nextLine();
+        System.out.println("--------------------------------------------");
+        System.out.println("Enter project data:");
+        System.out.println("--------------------------------------------");
+        System.out.println("Project name:");
+        String projectName = reader.nextLine();
+    
+        System.out.println("Customer name:");
+        String clientName = reader.nextLine();
+
+        double budget = 0;
+        while (true) {
+            System.out.println("Project budget value:");
+            if (reader.hasNextDouble()) {
+                budget = reader.nextDouble();
                 break;
-                
-        }
-    }
-
-    /**
-     * Creates a new project and adds it to the array of projects. The user is prompted to enter the
-     * name of the project, the name of the client, the project budget, and the duration of each stage.
-     * The start and end dates of the project are calculated based on the duration of each stage. If the
-     * number of projects in the array of projects is less than 10, the project is added to the array and
-     * becomes the current project. Otherwise, an error message is displayed.
-     */
-
-    public void registerProject() {
-        if (numProyectos < 10) {
-            System.out.println("Ingrese el nombre del proyecto:");
-            String nombreProyecto = reader.nextLine();
-            reader.nextLine();
-            System.out.println("Ingrese el nombre del cliente:");
-            String cliente = reader.nextLine();
-            System.out.println("Ingrese el presupuesto del proyecto:");
-            double presupuesto = reader.nextDouble();
-    
-            // Pide al usuario los meses de duración de cada etapa
-            System.out.println("Ingrese los meses de duracion de cada etapa:");
-            int[] mesesPorEtapa = new int[6];
-            String[] nombresEtapas = {"Inicio", "Analisis", "Diseno", "Ejecucion", "Cierre y seguimiento", "Control del proyecto"};
-            for (int i = 0; i < 6; i++) {
-                System.out.print(nombresEtapas[i] + ": ");
-                mesesPorEtapa[i] = reader.nextInt();
-            }
-    
-            Calendar fechaInicio = Calendar.getInstance();
-            Calendar fechaFin = (Calendar) fechaInicio.clone();
-            int totalMeses = 0;
-            for (int meses : mesesPorEtapa) {
-                totalMeses += meses;
-            }
-            fechaFin.add(Calendar.MONTH, totalMeses);
-    
-            Proyecto proyecto = new Proyecto(nombreProyecto, cliente, presupuesto, fechaInicio, fechaFin, mesesPorEtapa, 0);
-    
-            // Agregar el proyecto al arreglo de proyectos
-            proyectos[numProyectos] = proyecto;
-            numProyectos++;
-
-            gerentesProject();
-
-            proyectoActual = proyecto;
-            System.out.println("--------------------------------------------");
-            System.out.println("Fecha de inicio del proyecto: " + fechaInicio.getTime());
-            System.out.println("Fecha de fin del proyecto: " + fechaFin.getTime());
-            System.out.println("--------------------------------------------");
-        } else {
-            System.out.println("'No se pueden crear mas proyectos'");
-        }
-    }
-
-    /**
-     * Prompts the user to enter the name and phone number of the Green manager and the name and phone
-     * number of the client manager for the current project. Creates new Gerente objects for each
-     * manager and sets them as the Green manager and client manager for the current project.
-     */
-
-    public void gerentesProject() {
-        System.out.println("Ingrese el nombre del gerente del Green:");
-        String nombreGreen = reader.nextLine();
-        reader.nextLine();
-        System.out.println("Ingrese el numero de telefono del gerente del Green:");
-        String telefonoGreen = reader.next();
-        reader.nextLine();
-    
-        Gerente gerenteGreen = new Gerente(nombreGreen, telefonoGreen, null, null);
-    
-        System.out.println("Ingrese el nombre del gerente del cliente:");
-        String nombreCliente = reader.nextLine();
-        System.out.println("Ingrese el numero de telefono del gerente del cliente:");
-        String telefonoCliente = reader.next();
-    
-        Gerente gerenteCliente = new Gerente(null, null, nombreCliente, telefonoCliente);
-
-        proyectos[numProyectos-1].setGerenteGreen(gerenteGreen);
-        proyectos[numProyectos-1].setGerenteCliente(gerenteCliente);
-    }
-   
-    public void createBudge(Etapa currentEtapa) {  
-        reader.nextLine();  
-        if (numBudges < budges.length) {
-            System.out.println("Ingrese el identificador de la capsula");
-            String idBudge = reader.nextLine();
-            System.out.println("Ingrese la descripcion de la capsula");
-            String description = reader.nextLine();
-
-            System.out.println("Ingrese el tipo de capsula:");
-			System.out.println("1. Tecnico");
-			System.out.println("2. Gestion");
-			System.out.println("3. Dominio");
-            System.out.println("4.Experiencias");
-		
-			int tipoBudge = reader.nextInt();
-		
-			TipoCapsula type = null;
-		
-			switch (tipoBudge) {
-				case 1:
-					type = TipoCapsula.TECNICO;
-					break;
-				case 2:
-					type = TipoCapsula.GESTION;
-					break;
-				case 3:
-					type = TipoCapsula.DOMINIO;
-					break;
-                case 4:
-                    type = TipoCapsula.EXPERIENCIAS;
-				default:
-					System.out.println("Opción inválida");
-			}
-            reader.nextLine();
-            System.out.println("Ingrese la leccion aprendida dentro de la etapa");
-            String lessonLearned = reader.nextLine();
-            System.out.println("Ingrese su nombre (Colaborador):");
-            String nameCollaborator = reader.nextLine();
-            System.out.println("Ingrese su cargo (Colaborador):");
-            String jobCompany = reader.nextLine();
-    
-            Collaborator newCollaborator = new Collaborator(nameCollaborator, jobCompany);
-    
-            Budge newBudge = new Budge(idBudge, description, type, lessonLearned, newCollaborator);
-    
-            newBudge.setAprobada(false);
-    
-            Calendar fechaActual = Calendar.getInstance();
-            newBudge.setFechaAprobacion(fechaActual.getTime());
-    
-            budges[numBudges] = newBudge;
-            numBudges++;
-    
-            currentEtapa.addBudge(newBudge);
-            currentEtapa.addCollaborator(newCollaborator);
-    
-            System.out.println("--------------------------------------------");
-            System.out.println("'La capsula ha sido registrada y se encuentra en revision'");
-            System.out.println("--------------------------------------------");
-        } else {
-            System.out.println("No se pueden crear mas capsulas");
-        }
-    }
-    
-    /**
-     * Creates a new budge for the current stage with the given information and adds it to the budget array.
-     * Also adds the collaborator to the current stage.
-     *
-     * @param currentEtapa the current stage to add the new budge and collaborator to.
-     */
-    public void aprobarBudge(Etapa etapa) {
-        System.out.println("Capsulas registradas en la etapa " + etapa.getNombre());
-        System.out.println("--------------------------------------------");
-        for (int i = 0; i < numBudges; i++) {
-            if (!budges[i].isAprobada()) {
-                System.out.println(i + 1 + ") " + budges[i].getIdentificador() + " - " + budges[i].getDescripcion());
-            }
-        }
-        System.out.println("--------------------------------------------");
-        System.out.println("Ingrese el número de la cápsula que desea aprobar (0 para salir)");
-        int opcion = reader.nextInt();
-        while (opcion != 0) {
-            if (opcion > 0 && opcion <= numBudges && !budges[opcion-1].isAprobada()) {
-                budges[opcion-1].setAprobada(true);
-                Calendar fechaActual = Calendar.getInstance();
-                budges[opcion-1].setFechaAprobacion(fechaActual.getTime());
-                System.out.println("--------------------------------------------");
-                System.out.println("La cápsula " + budges[opcion-1].getIdentificador() + " ha sido aprobada el " + fechaActual.get(Calendar.DAY_OF_MONTH) + "/" + (fechaActual.get(Calendar.MONTH) + 1) + "/" + fechaActual.get(Calendar.YEAR) + " " + fechaActual.get(Calendar.HOUR_OF_DAY) + ":" + fechaActual.get(Calendar.MINUTE) + ":" + fechaActual.get(Calendar.SECOND));
-                System.out.println("--------------------------------------------");
             } else {
-                System.out.println("Cápsula no existente");
+                System.out.println("--------------------------------------------");
+                System.out.println("Please enter a valid numeric value.");
+                reader.next(); 
+                System.out.println("--------------------------------------------");
             }
-            System.out.println("Ingrese el número de la cápsula que desea aprobar (0 para salir)");
-            opcion = reader.nextInt();
+        }
+        reader.nextLine();
+        System.out.println("Green manager name for this project:");
+        String greenManagerName = reader.nextLine();
+    
+        System.out.println("Green manager cell number for this project:");
+        String greenManagerPhone = reader.nextLine();
+    
+        System.out.println("Name of client manager for this project:");
+        String clientManagerName = reader.nextLine();
+    
+        System.out.println("Mobile number of the client's manager for this project:");
+        String clientManagerPhone = reader.nextLine();
+        System.out.println("--------------------------------------------");
+        System.out.println("Enter the months of duration of each stage:");
+        int[] monthByStage = new int[6];
+        String[] nameStage = {"Initiation", "Analysis", "Design", "Execution", "Closing and follow up", "Project control"};
+        for (int i = 0; i < 6; i++) {
+            boolean validInput = false;
+            do {
+                System.out.print(nameStage[i] + ": ");
+                if (reader.hasNextInt()) {
+                    monthByStage[i] = reader.nextInt();
+                    validInput = true;
+                } else {
+                    System.out.println("You must enter a valid numeric value.");
+                    reader.nextLine(); 
+                }
+            } while (!validInput);
+        }
+
+        Calendar dateStart = Calendar.getInstance();
+        Calendar dateFinish = (Calendar) dateStart.clone();
+        int totalMonth = 0;
+        for (int month : monthByStage) {
+            totalMonth += month;
+        }
+        dateFinish.add(Calendar.MONTH, totalMonth);
+
+        Project newProject = new Project(projectName, clientName, budget, dateStart, dateFinish, monthByStage);
+        controller.addProject(newProject);
+
+        System.out.println("--------------------------------------------");
+        System.out.println("Project successfully registered.");
+
+        System.out.println("--------------------------------------------");
+        System.out.println("Project start date: " + dateStart.getTime());
+        System.out.println("Project finish date: " + dateFinish.getTime());
+    }
+
+    public void culminateStage() {
+        reader.nextLine();
+        System.out.println("--------------------------------------------");
+        System.out.print("Enter the project name: ");
+        String nameProject = reader.nextLine();
+
+        controller.culminateStage(nameProject);
+    }
+
+    public void registerBudge() {
+        Scanner reader = new Scanner(System.in);
+        System.out.println("Enter the project name:");
+        String nameProject= reader.nextLine();
+        System.out.println("Enter the capsule identifier:");
+        String idBudge = reader.nextLine();
+        System.out.println("Enter the description of the capsule:");
+        String description = reader.nextLine();
+
+        while (!description.matches(".*#\\w+#.*")) {
+            System.out.println("The description must include at least one keyword. Enter the description of the capsule:");
+            description = reader.nextLine();
+        }
+
+        int typeBudge = 0;        
+        System.out.println("--------------------------------------------");
+        System.out.println("Enter the type of capsule:");
+        System.out.println("1. Technical");
+        System.out.println("2. Management");
+        System.out.println("3. Domain");
+        System.out.println("4. Experiences");
+        
+        boolean validType = false;
+        while (!validType) {
+            if (reader.hasNextInt()) {
+                typeBudge = reader.nextInt();
+                reader.nextLine(); // Limpiar el buffer del scanner
+        
+                if (typeBudge >= 1 && typeBudge <= 4) {
+                    validType = true;
+                } else {
+                    System.out.println("Invalid option, please enter a number between 1 and 4:");
+                }
+            } else {
+                reader.nextLine(); // Limpiar el buffer del scanner
+                System.out.println("Invalid option, please enter a number:");
+            }
+        }
+        System.out.println("--------------------------------------------");
+        System.out.println("Enter the lesson learned within the stage:");
+        String lessonLearned = reader.nextLine();
+
+        while (!lessonLearned.matches(".*#\\w+#.*")) {
+            System.out.println("The lesson learned must include at least one keyword. Enter the lesson learned from the capsule:");
+            lessonLearned = reader.nextLine();
+        }
+        System.out.println("Enter the name of the collaborator:");
+        String nameCollaborator = reader.nextLine();
+        System.out.println("Enter the position of the collaborator:");
+        String jobCompany = reader.nextLine();
+    
+        controller.addBudgeToCurrentEtapa(nameProject, idBudge, description, typeBudge, lessonLearned, nameCollaborator, jobCompany);
+    }
+
+    public void approvedBudges() {
+        reader.nextLine();
+        System.out.print("Enter the project name: ");
+        String nameProject = reader.nextLine();
+
+        controller.approvedBudges(nameProject);
+    }
+
+    public void publishedBudge() {
+        reader.nextLine();
+        System.out.print("Enter the project name: ");
+        String nameProject = reader.nextLine();
+
+        controller.publishedBudgesApproved(nameProject);
+    }
+
+    public void budgesByType() {
+        reader.nextLine();
+        System.out.print("Enter the project name: ");
+        String nameProject = reader.nextLine();
+
+        controller.createBudgeReport(nameProject);
+    }
+
+    public void searchCollaboratorBudge() {
+        reader.nextLine();
+        System.out.print("Enter the name of the collaborator: ");
+        String nameCollaborator = reader.nextLine();
+
+        controller.searchCollaborator(nameCollaborator);
+    }
+
+    public void searchProjectMoreBudges(){
+        String projectMoreBudges = controller.projectWithMoreBudges();
+        if (projectMoreBudges != null) {
+            System.out.println("--------------------------------------------");
+            System.out.println("The project with more capsules is: " + projectMoreBudges);
+        } else {
+            System.out.println("There are no projects with capsules.");
         }
     }
 
-    /**
-     * Displays a list of approved capsules and allows the user to publish one of them
-     * by entering its number. The published capsule's URL is then displayed.
-     * If a valid badge number is entered and it has not been already published, the badge is marked as published
-     * @param etapa the stage in which the capsules were approved
-     */
+    public void informationLessonsLearning() {
+        reader.nextLine();
+        System.out.println("Enter the project name: ");
+        String nameProject = reader.nextLine();
+        Project project = controller.findProjectByName(nameProject);
+        if (project == null) {
+            System.out.println("Not project exist");
+            return;
+        }
+        System.out.println("Enter the name of the stage: ");
+        String nameStage = reader.nextLine();
+        Stage stage = project.searchStage(nameStage);
+        if (stage == null) {
+            System.out.println("The stage is not active in this project");
+            return;
+        }
+        controller.informationLessonsLearning(project, stage);
+    }
 
-    public void publicarBudge(Etapa etapa) {
-        System.out.println("Capsulas aprobadas:");
-        System.out.println("--------------------------------------------");
-        for (int i = 0; i < numBudges; i++) {
-            if (budges[i].isAprobada() && !budges[i].isPublicada()) {
-                System.out.println(i + 1 + ") " + budges[i].getIdentificador() + " - " + budges[i].getDescripcion());
-            }
-        }
-        System.out.println("--------------------------------------------");
-        System.out.println("Ingrese el número de la cápsula que desea publicar (0 para salir)");
-        int opcion = reader.nextInt();
-        while (opcion != 0) {
-            if (opcion > 0 && opcion <= numBudges && budges[opcion-1].isAprobada() && !budges[opcion-1].isPublicada()) {
-                budges[opcion-1].setPublicada(true);
-                String url = "https://www.capsulas.com/capsula/" + budges[opcion-1].getIdentificador();
-                System.out.println("--------------------------------------------");
-                System.out.println("La cápsula " + budges[opcion-1].getIdentificador() + " ha sido publicada en la siguiente URL:");
-                System.out.println(url);
-                System.out.println("--------------------------------------------");
-            } else {
-                System.out.println("Cápsula no existente o ya publicada");
-            }
-            System.out.println("Ingrese el número de la cápsula que desea publicar (0 para salir)");
-            opcion = reader.nextInt();
-        }
+    public void searchCapsulesByKeyword() {
+        reader.nextLine();
+        System.out.println("Ingrese el nombre del proyecto:");
+        String projectName = reader.nextLine();
+        System.out.println("Ingrese la palabra clave:");
+        String keyword = reader.nextLine();
+        controller.searchBudges(projectName, keyword);
     }
 }

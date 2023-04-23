@@ -1,9 +1,10 @@
 package model;
+
 import java.util.Calendar;
 import java.util.Date;
 import model.Collaborator;
-import model.Proyecto;
-import model.Etapa;
+import model.Project;
+import model.Stage;
 
 /**
  * The Budge class represents a budget item or a capsule.
@@ -14,15 +15,16 @@ import model.Etapa;
 public class Budge {
     private String id;
     private String description;
-    private TipoCapsula type;
+    private TypeBudge type;
     private String lessonLearned;
-    private String etapa;
     private String[] hashtags;
-    private Calendar fechaCreacion;
-    private Calendar fechaAprobacion;
-    private boolean aprobada;
+    private Calendar dateCreation;
+    private Calendar dateAprobation;
+    private boolean approved;
     private Collaborator creator;
-    private boolean publicada;
+    private boolean published;
+    private Project project;
+    private Stage stage;
 
     /**
      * Constructs a Budge object with the specified identifier, description, type, lesson learned, and creator.
@@ -34,12 +36,12 @@ public class Budge {
      * @param creator the creator of this Budge.
     */
 
-    public Budge(String id, String description, TipoCapsula type, String lessonLearned, Collaborator creator) {
+    public Budge(String id, String description, TypeBudge type, String lessonLearned, Collaborator creator) {
         this.id = id;
         this.description = description;
         this.type = type;
         this.lessonLearned = lessonLearned;
-        this.fechaCreacion = Calendar.getInstance();
+        this.dateCreation = Calendar.getInstance();
         this.creator = creator;
     }
 
@@ -47,12 +49,13 @@ public class Budge {
      * The enumeration of the different types of a Budge.
     */
 
-    public enum TipoCapsula {
-        TECNICO,
-        GESTION,
-        DOMINIO,
-        EXPERIENCIAS
+    public enum TypeBudge {
+        TECHNICAL,
+        MANAGEMENT,
+        DOMAIN,
+        EXPERIENCES
     }
+
 
     /**
      * Returns the identifier of this Budge.
@@ -60,7 +63,7 @@ public class Budge {
      * @return the identifier of this Budge.
     */
     
-    public String getIdentificador() {
+    public String getId() {
         return id;
     }
 
@@ -70,7 +73,7 @@ public class Budge {
      * @return the description of this Budge.
     */
 
-    public String getDescripcion() {
+    public String getDescription() {
         return description;
     }
     
@@ -79,7 +82,7 @@ public class Budge {
      *
      * @return the type of this Budge.
      */
-    public TipoCapsula getBudge(){
+    public TypeBudge getBudge(){
         return type;
     }
     
@@ -88,17 +91,8 @@ public class Budge {
      *
      * @return the lesson learned of this Budge.
      */
-    public String getAprendizaje() {
+    public String getLearning() {
         return lessonLearned;
-    }
-    
-    /**
-     * Returns the hashtags associated with this Budge.
-     *
-     * @return the hashtags associated with this Budge.
-     */
-    public String[] getHashtags() {
-        return hashtags;
     }
     
     /**
@@ -106,8 +100,8 @@ public class Budge {
      *
      * @return true if this Budge is approved, false otherwise.
      */
-    public boolean isAprobada(){
-        return aprobada;
+    public boolean isApproved(){
+        return approved;
     }
 
     /**
@@ -115,78 +109,96 @@ public class Budge {
      * 
      * @param aprobada the approval status of the capsule
      */
-public void setAprobada(boolean aprobada) {
-    this.aprobada = aprobada;
-    if (aprobada) {
-        this.fechaAprobacion = Calendar.getInstance();
-    } else {
-        this.fechaAprobacion = null;
+    public void setApproved(boolean approved) {
+        this.approved = approved;
+       if (approved) {
+           this.dateAprobation = Calendar.getInstance();
+        } else {
+           this.dateAprobation = null;
+       }
     }
-}
 
-/**
+  /**
  * Approve the capsule.
  * 
  * Note: This method changes the approval status of the capsule to true.
  */
-public void aprobar() {
-    this.aprobada = true;
-}
+  public void approved() {
+    this.approved = true;
+  }
 
 /**
  * Obtains the approval date of the capsule.
  * 
  * @return the approval date of the capsule
  */
-public Calendar getFechaAprobacion() {
-    return fechaAprobacion;
-}
+   public Calendar getDateAprobation() {
+      return dateAprobation;   
+    }
 
 /**
  * Gets the date of creation of the capsule.
  * 
  * @return the date of creation of the capsule
  */
-public Calendar getFechaCreacion() {
-    return fechaCreacion;
-}
+  public Calendar getDateCreation() {
+    return dateCreation;
+  }
 
 /**
  * Sets the approval date of the capsule.
  * 
- * @param fechaAprobacion the approval date of the capsule
+ * @param dateAprobation the approval date of the capsule
  */
-public void setFechaAprobacion(Date fechaAprobacion) {
+  public void setDateAprobation(Date dateAprobation) {
     Calendar cal = Calendar.getInstance();
-    cal.setTime(fechaAprobacion);
-    this.fechaAprobacion = cal;
-}
+    cal.setTime(dateAprobation);
+    this.dateAprobation = cal;
+  }
 
 /**
  * gets the creator of the capsule.
  * 
  * @return the creator of the capsule
  */
-public Collaborator getCreator() {
+  public Collaborator getCreator() {
     return creator;
-}
+  }
 
 /**
  * Check if the capsule has been published.
  * 
  * @return true if the capsule has been published, otherwise false
  */
-public boolean isPublicada() {
-    return publicada;
-}
+  public boolean isPublished() {
+    return published;
+  }
 
 /**
  * Sets whether the capsule has been published.
  * 
  * @param publicada the publication status of the capsule
  */
-public void setPublicada(boolean publicada) {
-    this.publicada = publicada;
-}
+  public void setPublished(boolean published) {
+    this.published = published;
+  }
+
+  /**
+   * Returns the current stage of the project.
+   * @return the current stage of the project
+   */
+
+  public Stage getStage() {
+    return stage;
+  }
+  /**
+   * Returns the project associated with this stage.
+   * @return the project associated with this stage
+   */
+
+  public Project getProject() {
+    return project;
+  }
+
 
 }
