@@ -16,6 +16,7 @@ public class Administrator {
 
     public static final int SIZE_PROJECT = 10;
 	public static final int SIZE_BUDGES = 50;
+    private String[] hashtags;
     private Project[] projects;
 	private Budge[] budges; // arreglo de objetos Budge
 	private Scanner reader; 
@@ -38,13 +39,18 @@ public class Administrator {
      * @param project the project to be added
      */
     public void addProject(Project project) {
-        for (int i = 0; i < projects.length; i++) {
-            if (projects[i] == null) {
-                projects[i] = project;
-                break;
-            }
-        }
-    }
+		int numProjects = 0;
+		for (int i = 0; i < projects.length; i++) {
+			if (projects[i] != null) {
+				numProjects++;
+			}
+		}
+		if (numProjects < SIZE_PROJECT) {
+			projects[numProjects] = project;
+		} else {
+			System.out.println("Sorry, no more than 10 projects can be added.");
+		}
+	}
 
 	/**
      * Adds a new budget to the current stage of the specified project.
@@ -83,18 +89,23 @@ public class Administrator {
 					System.out.println("invalid option");
 					return;
 			}
-			Budge newBudge = new Budge(idBudge, description, type, lessonLearned, newCollaborator);
-			newBudge.setApproved(false);
-			Calendar dateActual = Calendar.getInstance();
-			newBudge.setDateAprobation(dateActual.getTime());
-	
-			currentStage.addBudge(newBudge);
-			currentStage.addCollaborator(newCollaborator);
-			budges[numBudges] = newBudge;
-			numBudges++;
-	
-			System.out.println("--------------------------------------------");
-			System.out.println("'The capsule has been registered and is under review'");
+			if (numBudges < SIZE_BUDGES) {
+				Budge newBudge = new Budge(idBudge, description, type, lessonLearned, newCollaborator);
+				newBudge.setApproved(false);
+				Calendar dateActual = Calendar.getInstance();
+				newBudge.setDateAprobation(dateActual.getTime());
+		
+				currentStage.addBudge(newBudge);
+				currentStage.addCollaborator(newCollaborator);
+				budges[numBudges] = newBudge;
+				numBudges++;
+		
+				System.out.println("--------------------------------------------");
+				System.out.println("'The capsule has been registered and is under review'");
+			} else {
+				System.out.println("--------------------------------------------");
+				System.out.println("Sorry, no more than 50 budgets can be added.");
+			}
 		} else {
 			System.out.println("--------------------------------------------");
 			System.out.println("Project not found");
@@ -349,7 +360,7 @@ public class Administrator {
 	 */
 
 	public void informationLessonsLearning(Project project, Stage stage) {
-		System.out.println("Lecciones aprendidas del proyecto " + project.getNameProject() + " en la etapa " + stage.getNameStage() + ":");
+		System.out.println("Lessons learned from the project " + project.getNameProject() + " in the stage " + stage.getNameStage() + ":");
 		boolean registerBudges = false;
 		for (Budge budge : getBudges()) {
 			// Verificar si la cápsula está en la etapa especificada
@@ -359,27 +370,61 @@ public class Administrator {
 			}
 		}
 		if (!registerBudges) {
-			System.out.println("No hay capsulas registradas en la etapa " + stage.getNameStage() + " del proyecto " + project.getNameProject() + ".");
+			System.out.println("There are no capsules registered in the stage " + stage.getNameStage() + " of project " + project.getNameProject() + ".");
 		}
 	}
 
 	/**
-	 * Search for budges in a specific project that contain a keyword.
-	 * @param nameProject the name of the project to search for budges.
-	 * @param wordKey the keyword to search for in the budges.
-	 * 
+	 * Extracts hashtags from a string representing a learning capsule.
+	 * @param learning the string representing the learning capsule
+	 * @return an array of strings representing the hashtags in the learning capsule
 	 */
+	public String[] getHashtags(String learning) {
+		String[] words = learning.split(" ");
+		String[] hashtags = new String[words.length];
+		int index = 0;
+	
+		for (String word : words) {
+			if (word.startsWith("#") && word.endsWith("#") && word.length() > 1) {
+				hashtags[index++] = word.substring(1, word.length() - 1);
+			}
+		}
+	
+		String[] result = new String[index];
+		System.arraycopy(hashtags, 0, result, 0, index);
+		return result;
+	}
+	/**
+	 * Searches for capsules in a specified project that contain a specific hashtag.
+	 * @param nameProject  the name of the project to search in
+	 * @param wordKey  the hashtag to search for
+	 */
+
 	public void searchBudges(String nameProject, String wordKey) {
 		Project project = findProjectByName(nameProject);
-		if (project != null) {
-			for (Budge budge : getBudges()) {
-				if (budge.getDescription().contains(wordKey)) {
-					System.out.println("Budge: " + budge.getDescription());
-					System.out.println("Lesson learned: " + budge.getLearning());
+		if (project == null) {
+			System.out.println("The project does not exist");
+			return;
+		}
+		
+		boolean found = false;
+		for (Budge budge : getBudges()) {
+			if (budge == null) {
+				continue;
+			}
+			String[] hashtags = getHashtags(budge.getLearning());
+			for (String hashtag : hashtags) {
+				if (hashtag.equalsIgnoreCase(wordKey) && budge.isApproved()) {
+					System.out.println("--------------------------------------------");
+					System.out.println("Description: " + budge.getDescription());
+					System.out.println("Lesson Learned: " + budge.getLearning());
+					found = true;
 				}
 			}
-		} else {
-			System.out.println("No project found with the name '" + nameProject + "'.");
+		}
+		
+		if (!found) {
+			System.out.println("No capsules found with the specified keyword.");
 		}
 	}
 }

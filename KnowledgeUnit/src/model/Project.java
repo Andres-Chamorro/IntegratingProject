@@ -82,22 +82,22 @@ public class Project{
         String nameStage = "";
         switch (numStage) {
             case 1:
-                nameStage = "Inicio";
+                nameStage = "Initiation";
                 break;
             case 2:
-                nameStage = "Analisis";
+                nameStage = "Analysis";
                 break;
             case 3:
-                nameStage = "Disenio";
+                nameStage = "Design";
                 break;
             case 4:
-                nameStage = "Ejecucion";
+                nameStage = "Execution";
                 break;
             case 5:
-                nameStage = "Cierre";
+                nameStage = "Closing and follow up";
                 break;
             case 6:
-                nameStage = "Seguimiento y Control";
+                nameStage = "Project control";
         }
         return nameStage;
     }
@@ -111,7 +111,7 @@ public class Project{
         stages[index].setDateFinishReal(Calendar.getInstance());
         stages[index].setStageApproved(true);
         System.out.println("--------------------------------------------");
-        System.out.println("Etapa " + getStageName(index + 1) + " culminada el " + dateToString(stages[index].getDateFinishReal()));
+        System.out.println("Stage " + getStageName(index + 1) + " culminate the " + dateToString(stages[index].getDateFinishReal()));
     }
     
 
@@ -177,10 +177,10 @@ public class Project{
         if (numStage < 5) {
             numStage++;
             stages[numStage].setDateStartReal(Calendar.getInstance());
-            System.out.println("Comenzando la etapa " + getStageName(numStage+1));
+            System.out.println("Starting the stage " + getStageName(numStage+1));
         } else {
             // El proyecto ya ha terminado
-            System.out.println("El proyecto ya ha finalizado.");
+            System.out.println("The project has already finished.");
         }
     }
     /**

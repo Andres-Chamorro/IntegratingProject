@@ -17,7 +17,6 @@ public class Budge {
     private String description;
     private TypeBudge type;
     private String lessonLearned;
-    private String[] hashtags;
     private Calendar dateCreation;
     private Calendar dateAprobation;
     private boolean approved;
@@ -43,6 +42,7 @@ public class Budge {
         this.lessonLearned = lessonLearned;
         this.dateCreation = Calendar.getInstance();
         this.creator = creator;
+        this.published= published;
     }
 
     /**
@@ -199,6 +199,5 @@ public class Budge {
   public Project getProject() {
     return project;
   }
-
 
 }

@@ -54,7 +54,7 @@ public class Main{
         System.out.println("Menu:");
         System.out.println("1. Create a project");
         System.out.println("2. Complete stage of a project");
-        System.out.println("3. Registrar capsula");
+        System.out.println("3. Register capsula");
         System.out.println("4. Approve capsule");
         System.out.println("5. Published capsule");
         System.out.println("6. Consult capsules by type");
@@ -168,11 +168,12 @@ public class Main{
         System.out.println("Green manager cell number for this project:");
         String greenManagerPhone = reader.nextLine();
     
-        System.out.println("Name of client manager for this project:");
+        System.out.println("Client manager name for this project:");
         String clientManagerName = reader.nextLine();
-    
+
         System.out.println("Client manager cell number for this project:");
         String clientManagerPhone = reader.nextLine();
+
         System.out.println("--------------------------------------------");
         System.out.println("Enter the months of duration of each stage:");
         int[] monthByStage = new int[6];
@@ -232,7 +233,7 @@ public class Main{
      */
 
     public void registerBudge() {
-        Scanner reader = new Scanner(System.in);
+        reader.nextLine();
         System.out.println("Enter the project name:");
         String nameProject= reader.nextLine();
         System.out.println("Enter the capsule identifier:");
@@ -240,9 +241,11 @@ public class Main{
         System.out.println("Enter the description of the capsule:");
         String description = reader.nextLine();
 
-        while (!description.matches(".*#\\w+#.*")) {
+        String[] hashtags = controller.getHashtags(description);
+        while (hashtags.length == 0) {
             System.out.println("The description must include at least one keyword. Enter the description of the capsule:");
             description = reader.nextLine();
+            hashtags = controller.getHashtags(description);
         }
 
         int typeBudge = 0;        
@@ -273,9 +276,11 @@ public class Main{
         System.out.println("Enter the lesson learned within the stage:");
         String lessonLearned = reader.nextLine();
 
-        while (!lessonLearned.matches(".*#\\w+#.*")) {
+        String[] lessonLearnedHashtags = controller.getHashtags(lessonLearned);
+        while (lessonLearnedHashtags.length == 0) {
             System.out.println("The lesson learned must include at least one keyword. Enter the lesson learned from the capsule:");
             lessonLearned = reader.nextLine();
+            lessonLearnedHashtags =controller.getHashtags(lessonLearned);
         }
         System.out.println("Enter the name of the collaborator:");
         String nameCollaborator = reader.nextLine();
@@ -384,6 +389,7 @@ public class Main{
         String projectName = reader.nextLine();
         System.out.println("enter keyword:");
         String keyword = reader.nextLine();
+
         controller.searchBudges(projectName, keyword);
     }
 }
